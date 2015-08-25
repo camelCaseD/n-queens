@@ -209,31 +209,38 @@
       var i = minorDiagonalColumnIndexAtFirstRow;
       var rows = this.rows();
       var n = this.get('n');
-      var column = [];
+      var columnArray = [];
+      var counter = 0;
 
-      if (i < n) {
-        rows = rows.slice(0, i + 1);
-        _.each(rows, function(row, index) {
-          var colIndex = i - index;
-          column.push(row[colIndex]);
-        });
+      if (i > n - 1) {
+        rows = rows.slice(i - n + 1, rows.length);
+        var column = n - 1;
+        for (var r = 0; r < rows.length; r++) {
+          var row = rows[r];
+          var cell = row[column];
+          if (cell === 1) {
+            counter++;
+          }
+          column--;
+        }
       } else {
-        rows = rows.slice(i - n, rows.length);
-        var colIndex = n - 1;
-        _.each(rows, function(row, index) {
-          column.push(row[colIndex]);
-          colIndex--;
-        });
+        rows = rows.slice(0, i + 1);
+        var column = i;
+        for (var r = 0; r < rows.length; r++) {
+          var row = rows[r];
+          var cell = row[column];
+          if (cell === 1) {
+            counter++;
+          }
+          column--;
+        }
       }
 
-      var counter = 0;
-      _.each(column, function(cell) {
-        if (cell === 1) {
-          counter++;
-        }
-      });
+      if (counter > 1){
+        return true;
+      }
 
-      return counter > 1; // fixme
+      return false; // fixme
     },
 
     // test if any minor diagonals on this board contain conflicts
