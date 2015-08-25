@@ -58,17 +58,13 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutions = [];
+  var counter = 0;
   var board = new Board({n:n});
 
   var operation = function(rowIndex) {
     //finished recursion
     if (rowIndex === n) {
-      var temp = [];
-      _.each(board.rows(),function(row){
-        temp.push(row.slice())
-      });
-      solutions.push(temp);
+      counter++;
       return;
     }
     
@@ -86,8 +82,8 @@ window.countNRooksSolutions = function(n) {
 
   operation(0);
 
-  console.log('Number of solutions for ' + n + ' rooks:', solutions.length);
-  return solutions.length;
+  console.log('Number of solutions for ' + n + ' rooks:', counter);
+  return counter;
 };
 
 
@@ -134,8 +130,35 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solution = undefined; //fixme
+  var counter = 0;
+  var board = new Board({n:n});
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  var operation = function(rowIndex) {
+    //finished recursion
+    if (rowIndex === n) {
+      counter++;
+      return;
+    }
+    
+    // Iterating over columns
+    for (var colIndex = 0;colIndex < n; colIndex++) {
+      board.togglePiece(rowIndex,colIndex);
+      // console.log(rowIndex);
+      if (!board.hasColConflictAt(colIndex) && !board.hasMajorDiagonalConflictAt(colIndex - rowIndex) && !board.hasMinorDiagonalConflictAt(colIndex + rowIndex)){
+        operation(rowIndex+1);
+      }
+      //revert back
+      //untoggle each piece for next iteration
+      board.togglePiece(rowIndex,colIndex);
+    }
+  }
+
+  if (n !== 2 && n !== 3) {
+    operation(0);
+  } else {
+    return counter;
+  }
+
+  console.log('Number of solutions for ' + n + ' queens:', counter);
+  return counter;
 };
